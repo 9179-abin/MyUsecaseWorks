@@ -21,10 +21,7 @@ public class BookController {
 	@Autowired 
 	BookRepo bookrepo;
 	
-	@GetMapping("/trybook")
-	public String start() {
-		return "Hello";
-	}
+
 	
 	@GetMapping("/books")
 	public List<Books> findAll(){
@@ -55,12 +52,6 @@ public class BookController {
 		return b;
 	}
 	
-//	@GetMapping("/edit/{id}")
-//	public void edit(@PathVariable int id) {
-//		Optional<Books> b =bookrepo.findById(id);
-//		Books book = b.get();
-//		book.setStock(4);
-//		bookrepo.save(book);
-//	}
+
 
 }

@@ -3,7 +3,7 @@ package com.cts.training.backendservice.controller;
 //import java.nio.charset.StandardCharsets;
 //import java.util.Base64;
 import java.util.List;
-import java.util.stream.Collectors;
+//import java.util.stream.Collectors;
 
 //import javax.servlet.http.HttpServletRequest;
 
@@ -19,10 +19,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 //import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.cts.training.backendservice.models.Books;
-import com.cts.training.backendservice.models.Delivery;
-import com.cts.training.backendservice.models.Login;
-import com.cts.training.backendservice.models.Orders;
+//import com.cts.training.backendservice.models.Books;
+//import com.cts.training.backendservice.models.Delivery;
+//import com.cts.training.backendservice.models.Login;
+//import com.cts.training.backendservice.models.Orders;
 import com.cts.training.backendservice.models.UserBooks;
 import com.cts.training.backendservice.models.Users;
 import com.cts.training.backendservice.service.BookService;
@@ -56,6 +56,12 @@ public class UserController {
 	@GetMapping("/users")
 	public List<Users> findAll() {
 		return userservice.getAll();
+	}
+	
+	@PostMapping("/userbooks")
+	public UserBooks insertUserBooks(@RequestBody UserBooks userBook) {
+		userbookservice.insert(userBook);
+		return userBook;
 	}
 	
 	@GetMapping("/userbooks/{tableid}")
@@ -94,12 +100,11 @@ public class UserController {
 		Users us = userservice.alter(usr);
 		return us;
 	}
-
-	@PostMapping("/users/login")
-	public ResponseEntity<?> login(@RequestBody Login login){
-		
+	
+	@GetMapping("/validuser/{username}/{password}")
+	public ResponseEntity<?> userLogin(@PathVariable String username,@PathVariable String password){
 		try {
-			Users user = userservice.getUserByUsernameAndPassword(login.getUsername(),login.getPassword());
+			Users user = userservice.getUserByUsernameAndPassword(username,password);
 			
 			return new ResponseEntity<Users>(user,HttpStatus.OK);
 		} catch (Exception e ) {
@@ -107,60 +112,7 @@ public class UserController {
 			return new ResponseEntity<String>("No user found",HttpStatus.NOT_FOUND);
 		}
 	}
-	
-//	@GetMapping("/users/available-books")
-//	public List<Books> availableBooks(){
-//		List<Books> books = bookservice.getAll();
-//		books=books.stream().filter(e->e.getStock()>0).collect(Collectors.toList());
-//		return books;
-//	}
-	
-//	@GetMapping("/users/place-order/{userid}/{bookid}")
-//	public void placeOrder(@PathVariable int userid,@PathVariable int bookid) {
-//		
-//		Orders order = new Orders(1,bookid, userid, false, false);
-//		orderservice.insert(order);
-//		
-//		
-//	}
-	
-//	@GetMapping("/users/userbooks/{userid}")
-//	public List<UserBooks> userBooks(@PathVariable int userid){
-//		List<UserBooks> books = userbookservice.getAll();
-//		books = books.stream().filter(e->e.getUserid()==userid).collect(Collectors.toList());
-//		return books;
-//	}
-	
-//	@GetMapping("/users/return/{tableid}")
-//	public void returnBooks(@PathVariable int tableid) {
-//		int userid = userbookservice.getOne(tableid).getUserid();
-//		int bookid = userbookservice.getOne(tableid).getBookid();
-//		Delivery delivery = deliveryservice.getByUseridAndBookid(userid, bookid);
-//		delivery.setDeliverystatus(false);
-//		delivery.setDeliverytype("return");
-//		deliveryservice.alter(delivery);
-//		userbookservice.remove(tableid);
-//	}
-	
-//	@GetMapping("/users/login")
-//	public ResponseEntity<?> login(HttpServletRequest request){
-//		String credentials =null;
-//		String authorization = request.getHeader("Authorization");
-//		if (authorization != null && authorization.startsWith("Basic")) {
-//			String base64Credentials = authorization.substring("Basic".length()).trim();
-//		    byte[] credDecoded = Base64.getDecoder().decode(base64Credentials);
-//		    credentials = new String(credDecoded, StandardCharsets.UTF_8);
-//		}
-//		try {
-//			Users user = userservice.getUserByUsernameAndPassword(credentials.split(":")[0],credentials.split(":")[1]);
-//			
-//			return new ResponseEntity<Users>(user,HttpStatus.OK);
-//		} catch (Exception e ) {
-//			System.out.println(e.getStackTrace());
-//			return new ResponseEntity<String>("No user found",HttpStatus.NOT_FOUND);
-//		}
-//	}
-	
+
 	
 
 }

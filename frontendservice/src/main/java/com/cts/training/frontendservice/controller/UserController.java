@@ -10,15 +10,20 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+//import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
 import com.cts.training.frontendservice.dto.Books;
 import com.cts.training.frontendservice.dto.Delivery;
+import com.cts.training.frontendservice.dto.Login;
 import com.cts.training.frontendservice.dto.Orders;
 import com.cts.training.frontendservice.dto.UserBooks;
 import com.cts.training.frontendservice.dto.Users;
@@ -63,7 +68,7 @@ public class UserController {
 		booklist = booklist.stream().filter(e->e.getStock()>0).collect(Collectors.toList());
 		return booklist;
 	}
-	
+	 
 	
 	@GetMapping("/placeorder/{userid}/{bookid}") //------> TO PLACE BOOK ORDER
 	public Orders placeOrder(@PathVariable int userid, @PathVariable int bookid) {
@@ -80,7 +85,7 @@ public class UserController {
 		return order1;
 	}
 	
-	@GetMapping("/show-userbooks/{userid}") //-------> SHOWS BOOKS BORROWED BY USER
+	@GetMapping("/show-userbooks/{userid}") // -------> SHOWS BOOKS BORROWED BY USER
 	public List<UserBooks> showUserBooks(@PathVariable int userid)
 	{
 		Application application = eurekaClient.getApplication("backend-service");
@@ -127,6 +132,22 @@ public class UserController {
        });
 		
 		return delivery2;
+	}
+	
+	@PostMapping("/login")//-----> USER LOGIN
+	public ResponseEntity<?> userLogin(@RequestBody Login login) {
+		Application application = eurekaClient.getApplication("backend-service");
+		InstanceInfo instanceInfo = application.getInstances().get(0);
+		String url = "http://"+instanceInfo.getIPAddr()+":"+instanceInfo.getPort()+"/validuser/"+login.getUsername()+"/"+login.getPassword();
+		try {
+			ResponseEntity<?> responce = restTemplate.exchange(url, HttpMethod.GET, null,
+					new ParameterizedTypeReference<Users>() {
+					});
+			return responce;
+		} catch (Exception e) {
+			System.out.println(e.getStackTrace());
+			return new ResponseEntity<String>("No user found",HttpStatus.NOT_FOUND);
+		}
 	}
 		
 

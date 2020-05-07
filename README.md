@@ -5,4 +5,7 @@
 	-> registered the services with eureka,
 	-> use rest template through eureka server for 
                         inter-sevice communication
+#April 7 2020 (845108)
+	-> completed all application service 
+	    interation with backend service.
 	
