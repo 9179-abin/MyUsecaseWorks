@@ -50,39 +50,7 @@ public class UserController {
 	@Autowired
 	DeliveryService deliveryservice;
 	
-	@GetMapping("/users/available-books")
-	public List<Books> availableBooks(){
-		List<Books> books = bookservice.getAll();
-		books=books.stream().filter(e->e.getStock()>0).collect(Collectors.toList());
-		return books;
-	}
-	
-	@GetMapping("/users/place-order/{userid}/{bookid}")
-	public void placeOrder(@PathVariable int userid,@PathVariable int bookid) {
-		
-		Orders order = new Orders(1,bookid, userid, false, false);
-		orderservice.insert(order);
-		
-		
-	}
-	
-	@GetMapping("/users/userbooks/{userid}")
-	public List<UserBooks> userBooks(@PathVariable int userid){
-		List<UserBooks> books = userbookservice.getAll();
-		books = books.stream().filter(e->e.getUserid()==userid).collect(Collectors.toList());
-		return books;
-	}
-	
-	@GetMapping("/users/return/{tableid}")
-	public void returnBooks(@PathVariable int tableid) {
-		int userid = userbookservice.getOne(tableid).getUserid();
-		int bookid = userbookservice.getOne(tableid).getBookid();
-		Delivery delivery = deliveryservice.getByUseridAndBookid(userid, bookid);
-		delivery.setDeliverystatus(false);
-		delivery.setDeliverytype("return");
-		deliveryservice.alter(delivery);
-		userbookservice.remove(tableid);
-	}
+
 	
 	
 	@GetMapping("/users")
@@ -126,6 +94,54 @@ public class UserController {
 		Users us = userservice.alter(usr);
 		return us;
 	}
+
+	@PostMapping("/users/login")
+	public ResponseEntity<?> login(@RequestBody Login login){
+		
+		try {
+			Users user = userservice.getUserByUsernameAndPassword(login.getUsername(),login.getPassword());
+			
+			return new ResponseEntity<Users>(user,HttpStatus.OK);
+		} catch (Exception e ) {
+			System.out.println(e.getStackTrace());
+			return new ResponseEntity<String>("No user found",HttpStatus.NOT_FOUND);
+		}
+	}
+	
+//	@GetMapping("/users/available-books")
+//	public List<Books> availableBooks(){
+//		List<Books> books = bookservice.getAll();
+//		books=books.stream().filter(e->e.getStock()>0).collect(Collectors.toList());
+//		return books;
+//	}
+	
+//	@GetMapping("/users/place-order/{userid}/{bookid}")
+//	public void placeOrder(@PathVariable int userid,@PathVariable int bookid) {
+//		
+//		Orders order = new Orders(1,bookid, userid, false, false);
+//		orderservice.insert(order);
+//		
+//		
+//	}
+	
+//	@GetMapping("/users/userbooks/{userid}")
+//	public List<UserBooks> userBooks(@PathVariable int userid){
+//		List<UserBooks> books = userbookservice.getAll();
+//		books = books.stream().filter(e->e.getUserid()==userid).collect(Collectors.toList());
+//		return books;
+//	}
+	
+//	@GetMapping("/users/return/{tableid}")
+//	public void returnBooks(@PathVariable int tableid) {
+//		int userid = userbookservice.getOne(tableid).getUserid();
+//		int bookid = userbookservice.getOne(tableid).getBookid();
+//		Delivery delivery = deliveryservice.getByUseridAndBookid(userid, bookid);
+//		delivery.setDeliverystatus(false);
+//		delivery.setDeliverytype("return");
+//		deliveryservice.alter(delivery);
+//		userbookservice.remove(tableid);
+//	}
+	
 //	@GetMapping("/users/login")
 //	public ResponseEntity<?> login(HttpServletRequest request){
 //		String credentials =null;
@@ -145,18 +161,6 @@ public class UserController {
 //		}
 //	}
 	
-	@PostMapping("/users/login")
-	public ResponseEntity<?> login(@RequestBody Login login){
-		
-		try {
-			Users user = userservice.getUserByUsernameAndPassword(login.getUsername(),login.getPassword());
-			
-			return new ResponseEntity<Users>(user,HttpStatus.OK);
-		} catch (Exception e ) {
-			System.out.println(e.getStackTrace());
-			return new ResponseEntity<String>("No user found",HttpStatus.NOT_FOUND);
-		}
-	}
 	
 
 }
