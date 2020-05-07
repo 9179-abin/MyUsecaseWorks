@@ -64,16 +64,6 @@ public class UserController {
 		return booklist;
 	}
 	
-//	@GetMapping("/getbooks") //------> SHOW ALL AVAILABLE BOOKS
-//	public List<Books> availableBooks(){
-//		List<Books> booklist = new ArrayList<Books>();
-//		ResponseEntity<List<Books>> books = restTemplate.exchange("http://localhost:8000/books",
-//                HttpMethod.GET, null, new ParameterizedTypeReference<List<Books>>() {
-//        });
-//		books.getBody().forEach(e->booklist.add(e));
-//		List<Books> booklist1 = booklist.stream().filter(e->e.getStock()>0).collect(Collectors.toList());
-//		return booklist1;
-//	}
 	
 	@GetMapping("/placeorder/{userid}/{bookid}") //------> TO PLACE BOOK ORDER
 	public Orders placeOrder(@PathVariable int userid, @PathVariable int bookid) {
