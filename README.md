@@ -8,4 +8,8 @@
 #April 7 2020 (845108)
 	-> completed all application service 
 	    interation with backend service.
+#April 8 2020 (845108)
+	->added config server
+	->added basic auth with credentials
+	    from config server
 	

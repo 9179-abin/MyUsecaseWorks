@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -18,9 +19,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
+import com.cts.training.frontendservice.config.FrontendConfiguration;
 import com.cts.training.frontendservice.dto.Books;
 import com.cts.training.frontendservice.dto.Delivery;
 import com.cts.training.frontendservice.dto.Login;
@@ -32,6 +35,7 @@ import com.netflix.discovery.EurekaClient;
 import com.netflix.discovery.shared.Application;
 
 @RestController
+@RequestMapping("/user")
 public class UserController {
 	
 	@Autowired
@@ -40,18 +44,11 @@ public class UserController {
 	@Autowired
 	private EurekaClient eurekaClient;
 	
+	@Autowired
+	FrontendConfiguration configuration;
 	
-	
-	@GetMapping("/getallusers")//-----> SHOWS ALL USERS
-	public List<Users> printAll(){
-		List<Users> list = new ArrayList<Users>();
-		Application application = eurekaClient.getApplication("backend-service");
-		InstanceInfo instanceInfo = application.getInstances().get(0);
-		String url = "http://"+instanceInfo.getIPAddr()+":"+instanceInfo.getPort()+"/users";
-		list = restTemplate.exchange(url,
-                HttpMethod.GET, null, new ParameterizedTypeReference<List<Users>>() { }).getBody();
-		return list;
-	}
+	@Value("${service.backendService.serviceId}")
+	private String backendServiceId;
 	
 	
 	
@@ -60,11 +57,14 @@ public class UserController {
 	public List<Books> availableBooks()
 	{
 		List<Books> booklist = new ArrayList<Books>();
-		Application application = eurekaClient.getApplication("backend-service");
+		Application application = eurekaClient.getApplication(backendServiceId);
 		InstanceInfo instanceInfo = application.getInstances().get(0);
 		String url = "http://"+instanceInfo.getIPAddr()+":"+instanceInfo.getPort()+"/books";
+		HttpHeaders header = new HttpHeaders();
+		header.setBasicAuth(configuration.getBackendUsername(), configuration.getBackendPassword());
+		HttpEntity<String> requestEntity = new HttpEntity<String>( header);
 		booklist = restTemplate.exchange(url,
-              HttpMethod.GET, null, new ParameterizedTypeReference<List<Books>>() { }).getBody();
+              HttpMethod.GET, requestEntity, new ParameterizedTypeReference<List<Books>>() { }).getBody();
 		booklist = booklist.stream().filter(e->e.getStock()>0).collect(Collectors.toList());
 		return booklist;
 	}
@@ -76,7 +76,8 @@ public class UserController {
 		HttpHeaders requestHeaders = new HttpHeaders();
         requestHeaders.setContentType(MediaType.APPLICATION_JSON);
         requestHeaders.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
-        Application application = eurekaClient.getApplication("backend-service");
+        requestHeaders.setBasicAuth(configuration.getBackendUsername(), configuration.getBackendPassword());
+        Application application = eurekaClient.getApplication(backendServiceId);
 		InstanceInfo instanceInfo = application.getInstances().get(0);
 		String url = "http://"+instanceInfo.getIPAddr()+":"+instanceInfo.getPort()+"/orders/";
         HttpEntity<Orders> requestEntity = new HttpEntity<>(order, requestHeaders);
@@ -88,11 +89,15 @@ public class UserController {
 	@GetMapping("/show-userbooks/{userid}") // -------> SHOWS BOOKS BORROWED BY USER
 	public List<UserBooks> showUserBooks(@PathVariable int userid)
 	{
-		Application application = eurekaClient.getApplication("backend-service");
+		Application application = eurekaClient.getApplication(backendServiceId);
 		InstanceInfo instanceInfo = application.getInstances().get(0);
 		String url = "http://"+instanceInfo.getIPAddr()+":"+instanceInfo.getPort()+"/getall-userbooks";
+		HttpHeaders header = new HttpHeaders();
+		header.setBasicAuth(configuration.getBackendUsername(), configuration.getBackendPassword());
+		HttpEntity<String> requestEntity = new HttpEntity<String>( header);
+		
 		List<UserBooks> userbooks = restTemplate.exchange(url,
-                HttpMethod.GET, null, new ParameterizedTypeReference<List<UserBooks>>() {
+                HttpMethod.GET, requestEntity, new ParameterizedTypeReference<List<UserBooks>>() {
         }).getBody();
 		userbooks = userbooks.stream().filter(e->e.getUserid()==userid).collect(Collectors.toList());
 		return userbooks;
@@ -103,24 +108,29 @@ public class UserController {
 	@GetMapping("/return/{tableid}") //-------> RETURN BOOKS BORROWED BY USER
 	public Delivery bookReturn(@PathVariable int tableid) {
 		
-		Application application = eurekaClient.getApplication("backend-service");
+		Application application = eurekaClient.getApplication(backendServiceId);
 		InstanceInfo instanceInfo = application.getInstances().get(0);
 		String url = "http://"+instanceInfo.getIPAddr()+":"+instanceInfo.getPort()+"/userbooks/"+tableid;
 		
+		HttpHeaders header = new HttpHeaders();
+		header.setBasicAuth(configuration.getBackendUsername(), configuration.getBackendPassword());
+		HttpEntity<String> requestEntity1 = new HttpEntity<String>( header);
+		
 		int userid = restTemplate.exchange(url,
-				 HttpMethod.GET, null, new ParameterizedTypeReference<UserBooks>() { }).getBody().getUserid();
+				 HttpMethod.GET,  requestEntity1, new ParameterizedTypeReference<UserBooks>() { }).getBody().getUserid();
 		
 		int bookid = restTemplate.exchange(url,
-				 HttpMethod.GET, null, new ParameterizedTypeReference<UserBooks>() { }).getBody().getBookid();
+				 HttpMethod.GET,  requestEntity1, new ParameterizedTypeReference<UserBooks>() { }).getBody().getBookid();
 		String url1 = "http://"+instanceInfo.getIPAddr()+":"+instanceInfo.getPort()+"/delivery/details/"+userid+"/"+bookid;
 		
 		Delivery delivery = restTemplate.exchange(url1,
-				 HttpMethod.GET, null, new ParameterizedTypeReference<Delivery>() { }).getBody();
+				 HttpMethod.GET,  requestEntity1, new ParameterizedTypeReference<Delivery>() { }).getBody();
 		delivery.setDeliverystatus(false);
 		delivery.setDeliverytype("return");
 		HttpHeaders requestHeaders = new HttpHeaders();
         requestHeaders.setContentType(MediaType.APPLICATION_JSON);
         requestHeaders.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
+        requestHeaders.setBasicAuth(configuration.getBackendUsername(), configuration.getBackendPassword());
         HttpEntity<Delivery> requestEntity = new HttpEntity<>(delivery, requestHeaders);
         String url2 = "http://"+instanceInfo.getIPAddr()+":"+instanceInfo.getPort()+"/delivery/";
 		Delivery delivery2 = restTemplate.exchange(url2,
@@ -128,7 +138,7 @@ public class UserController {
 		
 		String url3 = "http://"+instanceInfo.getIPAddr()+":"+instanceInfo.getPort()+"/userbooks/delete/"+tableid;
 		restTemplate.exchange(url3,
-				 HttpMethod.DELETE, null, new ParameterizedTypeReference<UserBooks>() {
+				 HttpMethod.DELETE, requestEntity1, new ParameterizedTypeReference<UserBooks>() {
        });
 		
 		return delivery2;
@@ -136,11 +146,15 @@ public class UserController {
 	
 	@PostMapping("/login")//-----> USER LOGIN
 	public ResponseEntity<?> userLogin(@RequestBody Login login) {
-		Application application = eurekaClient.getApplication("backend-service");
+		Application application = eurekaClient.getApplication(backendServiceId);
 		InstanceInfo instanceInfo = application.getInstances().get(0);
 		String url = "http://"+instanceInfo.getIPAddr()+":"+instanceInfo.getPort()+"/validuser/"+login.getUsername()+"/"+login.getPassword();
+		HttpHeaders header = new HttpHeaders();
+		header.setBasicAuth(configuration.getBackendUsername(), configuration.getBackendPassword());
+		HttpEntity<String> requestEntity = new HttpEntity<String>( header);
+		
 		try {
-			ResponseEntity<?> responce = restTemplate.exchange(url, HttpMethod.GET, null,
+			ResponseEntity<?> responce = restTemplate.exchange(url, HttpMethod.GET, requestEntity,
 					new ParameterizedTypeReference<Users>() {
 					});
 			return responce;
