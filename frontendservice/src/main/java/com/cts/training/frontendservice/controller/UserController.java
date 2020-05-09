@@ -5,6 +5,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
@@ -50,7 +52,11 @@ public class UserController {
 	@Value("${service.backendService.serviceId}")
 	private String backendServiceId;
 	
-	
+	@GetMapping("/show")
+	public  String display(HttpServletRequest request){
+		
+		return request.getHeader("Authorization");
+	}
 	
 	
 	@GetMapping("/getbooks") //------> SHOW ALL AVAILABLE BOOKS
