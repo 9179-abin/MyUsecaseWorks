@@ -12,4 +12,6 @@
 	->added config server
 	->added basic auth with credentials
 	    from config server
+#April 9 2020 (845108)
+	->added zuul gateway server
 	
