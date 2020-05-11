@@ -14,4 +14,6 @@
 	    from config server
 #April 9 2020 (845108)
 	->added zuul gateway server
-	
+#April  11 2020 (845108)
+	-> Implemented @LoadBalanced for rest template
+	-> Implemented service layer for frontend service	
