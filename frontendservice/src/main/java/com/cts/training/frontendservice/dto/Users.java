@@ -7,13 +7,15 @@ public class Users {
 	String seatno;
 	String username;
 	String password;
+	String usertype;
 	public Users() {}
-	public Users(int userid, String seatno, String username, String password) {
+	public Users(int userid, String seatno, String username, String password, String usertype) {
 		super();
 		this.userid = userid;
 		this.seatno = seatno;
 		this.username = username;
 		this.password = password;
+		this.usertype = usertype;
 	}
 	public int getUserid() {
 		return userid;
@@ -39,11 +41,16 @@ public class Users {
 	public void setPassword(String password) {
 		this.password = password;
 	}
-	
+	public String getUsertype() {
+		return usertype;
+	}
+	public void setUsertype(String usertype) {
+		this.usertype = usertype;
+	}
 	@Override
 	public String toString() {
 		return "Users [userid=" + userid + ", seatno=" + seatno + ", username=" + username + ", password=" + password
-				+  "]";
+				+ ", usertype=" + usertype + "]";
 	}
 	
 	

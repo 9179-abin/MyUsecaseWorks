@@ -3,6 +3,7 @@ package com.cts.training.frontendservice;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
+import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.context.annotation.Bean;
 import org.springframework.web.client.RestTemplate;
 
@@ -14,6 +15,7 @@ public class FrontendServiceApplication {
 		SpringApplication.run(FrontendServiceApplication.class, args);
 	}
 	
+	@LoadBalanced
 	@Bean
 	public RestTemplate getRestTemplate() {
 		return new RestTemplate();
