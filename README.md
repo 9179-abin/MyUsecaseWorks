@@ -17,3 +17,5 @@
 #April  11 2020 (845108)
 	-> Implemented @LoadBalanced for rest template
 	-> Implemented service layer for frontend service	
+#April 12 2020 (845108)
+	->Done j-unit and mokito for frontend-service
