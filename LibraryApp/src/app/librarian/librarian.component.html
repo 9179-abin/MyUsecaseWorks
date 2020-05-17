@@ -1,0 +1,109 @@
+<div *ngIf="usertype=='admin'">
+    <app-navbar></app-navbar>
+    <div class=" bg-transparent table-responsive mx-2 text-center">
+        <h1>Librarian Dashboard</h1>
+    </div>
+    <div class="row">
+        <div class="col-5 ml-2 mt-4 text-center">
+            <h2>Books Stocks</h2>
+            <div class="table-responsive">
+                
+                <table class="table table-dark text-white">
+                    <tr>
+                        <th>Book ID</th>
+                        <th>Book Name</th>
+                        <th>Book Stocks</th>
+                    </tr>
+                    <tr *ngFor="let book of books">
+                        <td>{{book.bookid}}</td>
+                        <td>{{book.bookname}}</td>
+                        <td>{{book.stock}}</td>
+                    </tr>
+                </table>
+    
+        </div>
+        </div>
+        <div class="col-5 ml-5 mt-4 text-center">
+            <h2>Order & Return Requests</h2>
+            <div class="table-responsive">
+                
+                <table class="table table-dark text-white">
+                    <tr>
+                        <th>Order ID</th>
+                        <th>Book ID</th>
+                        <th>User ID</th>
+                    </tr>
+                    <tr *ngFor="let o of orders">
+                        <td>{{o.orderid}}</td>
+                        <td>{{o.bookid}}</td>
+                        <td>{{o.userid}}</td>
+                        <td><button class="btn btn-danger" (click)="accept(o)">Accept Order</button></td>
+                    </tr>
+                    <tr *ngFor="let o of rorders">
+                        <td>{{o.orderid}}</td>
+                        <td>{{o.bookid}}</td>
+                        <td>{{o.userid}}</td>
+                        <td><button class="btn btn-danger" (click)="return(o)">Accept Return</button></td>
+                    </tr>
+                </table>
+    
+        </div>
+    
+    
+    
+    </div>
+    </div>
+    <div class="row">
+        <div class="col-5 ml-2 mt-4 text-center">
+            <h2>All Users</h2>
+            <div class="table-responsive">
+                
+                <table class="table table-dark text-white">
+                    <tr>
+                        <th>User ID</th>
+                        <th>Username</th>
+                        <th>Seat No.</th>
+                        <th>Usertype</th>
+                    </tr>
+                    <tr *ngFor="let user of users">
+                        <td>{{user.userid}}</td>
+                        <td>{{user.username}}</td>
+                        <td>{{user.seatno}}</td>
+                        <td>{{user.usertype}}</td>
+                    </tr>
+                </table>
+    
+        </div>
+
+
+        </div>
+        <div class="col-5 ml-5 mt-4 text-center">
+            <h2>Books Borrowed</h2>
+            <div class="table-responsive">
+                
+                <table class="table table-dark text-white">
+                    <tr>
+                        <th>Order ID</th>
+                        <th>Book ID</th>
+                        <th>User ID</th>
+                    </tr>
+                    <tr *ngFor="let o of order1">
+                        <td>{{o.orderid}}</td>
+                        <td>{{o.bookid}}</td>
+                        <td>{{o.userid}}</td>
+                    </tr>
+                </table>
+    
+        </div>
+    
+    
+    
+    </div>
+
+    </div>
+
+</div>
+<div *ngIf="usertype!='admin'">
+    
+    <h1>You are not authorized to access !</h1>
+</div>

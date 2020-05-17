@@ -74,13 +74,12 @@ public class OrderServiceImpl implements OrderService {
 	}
 
 	@Override
-	public boolean deleteOrder(int orderid) {
+	public void deleteOrder(int orderid) {
 		HttpHeaders header = frontEndService.getAuthHeader();
 		HttpEntity<String> requestEntity = new HttpEntity<String>( header);
 		String url = basicUrl+backendServiceId+"/orders/"+orderid;
 		restTemplate.exchange(url, HttpMethod.DELETE, requestEntity, new ParameterizedTypeReference<String>() {
 		}).getBody();
-		return true;
 	}
 
 }

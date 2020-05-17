@@ -1,0 +1,40 @@
+<div class="container">
+    <div class="row m-4">
+        <div class="col" style="height: 70vh;">
+            
+                <div class="card shadow">
+                    <p class="h4 card-header text-center">LOGIN IN</p>
+                    <div class="card-body bg-light">
+
+                        <p class="card-text">Details:&nbsp;</p>
+                        <form [formGroup]="loginForm">
+
+                            <div class="input-group mt-3 mb-3 form-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text">Username</span>
+                                </div>
+                                <input id="username" type="text" class="form-control" formControlName="username" />
+                            </div>
+
+                            <div class="input-group mb-3 form-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text">Password</span>
+                                </div>
+                                <input id="password" type="password" class="form-control" formControlName="password"/>
+                            </div>
+
+                            <div class="form-check">
+                                <label class="form-check-label" for="check1">
+                                <input type="checkbox" class="form-check-input" id="check1" name="remember" value="1" checked>Remember me
+                                </label>
+                            </div>
+                            <div class="row justify-content-center">
+                            <button type="submit" class="btn btn-success " (click)="login()">Submit</button>
+                            <button type="reset" class="btn btn-danger ml-2 ">Reset</button></div>
+                        </form>
+
+                    </div>
+                </div>
+        </div>
+    </div>
+</div>

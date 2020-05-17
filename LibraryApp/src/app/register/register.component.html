@@ -1,0 +1,52 @@
+<div class="container">
+    <div class="row m-4">
+        <div class="col" style="height: 70vh;">
+                <div class="card shadow">
+                    <p class="h4 card-header text-center">SIGN-UP</p>
+                    <div class="card-body">
+
+                        <p class="card-text">Details:&nbsp;</p>
+                        <form [formGroup]="registerUser" (ngSubmit)="addUser()">
+                            <div class="input-group mt-3 mb-3 form-group">
+                                <!-- <div class="input-group-prepend">
+                                    <span class="input-group-text">Id</span>
+                                </div> -->
+                                <input id="userid" type="hidden" class="form-control" formControlName="userid" value=56/>
+                            </div>
+                            <div class="input-group mt-3 mb-3 form-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text">Username</span>
+                                </div>
+                                <input id="username" type="text" class="form-control" formControlName="username" />
+                            </div>
+
+                            <div class="input-group mb-3 form-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text">Password</span>
+                                </div>
+                                <input id="password" type="password" class="form-control" formControlName="password" />
+                            </div>
+
+                            <div class="input-group mb-3 form-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text">Seat no</span>
+                                </div>
+                                <input id="seatno" type="text" class="form-control" formControlName="seatno" />
+                            </div>
+
+                            <div class="input-group mb-3 form-group">
+                                <!-- <div class="input-group-prepend">
+                                    <span class="input-group-text">Mobile</span>
+                                </div> -->
+                                <input id="usertype" type="hidden" class="form-control" formControlName="usertype" value="user"/>
+                            </div>
+                            <div class="row justify-content-center">
+                            <button type="submit" class="btn btn-success " [disabled]="!registerUser.valid">Add User</button>
+                            <button type="reset" class="btn btn-danger ml-2 ">Reset</button></div>
+                        </form>
+
+                    </div>
+                </div>
+        </div>
+    </div>
+</div>

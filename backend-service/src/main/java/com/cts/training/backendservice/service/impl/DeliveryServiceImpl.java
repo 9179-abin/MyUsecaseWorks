@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.cts.training.backendservice.models.Delivery;
@@ -42,6 +44,8 @@ public class DeliveryServiceImpl implements DeliveryService {
 	@Override
 	public void remove(int id) {
 		deliveryrepo.deleteById(id);
+		ResponseEntity<String> response = new ResponseEntity<String>("Successfully Deleted",HttpStatus.OK);
+//		return response;
 		
 	}
 

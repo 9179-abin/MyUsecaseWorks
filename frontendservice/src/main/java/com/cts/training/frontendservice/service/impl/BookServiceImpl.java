@@ -62,4 +62,14 @@ public class BookServiceImpl implements BookService {
 	     return book;
 	}
 
+	@Override
+	public Books getOneBook(int bookid) {
+		HttpHeaders header = frontEndService.getAuthHeader();
+		HttpEntity<String> requestEntity = new HttpEntity<String>( header);
+		String url =basicUrl+backendServiceId+"/books/"+bookid;
+		Books book = restTemplate.exchange(url,
+	              HttpMethod.GET, requestEntity, new ParameterizedTypeReference<Books>() { }).getBody();
+		return book;
+	}
+
 }

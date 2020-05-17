@@ -1,11 +1,8 @@
 package com.cts.training.backendservice.controller;
 
-//import java.nio.charset.StandardCharsets;
-//import java.util.Base64;
-import java.util.List;
-//import java.util.stream.Collectors;
 
-//import javax.servlet.http.HttpServletRequest;
+import java.util.List;
+
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -16,18 +13,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-//import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
-
-//import com.cts.training.backendservice.models.Books;
-//import com.cts.training.backendservice.models.Delivery;
-//import com.cts.training.backendservice.models.Login;
-//import com.cts.training.backendservice.models.Orders;
 import com.cts.training.backendservice.models.UserBooks;
 import com.cts.training.backendservice.models.Users;
-import com.cts.training.backendservice.service.BookService;
-import com.cts.training.backendservice.service.DeliveryService;
-import com.cts.training.backendservice.service.OrderService;
 import com.cts.training.backendservice.service.UserBookService;
 import com.cts.training.backendservice.service.UserService;
 
@@ -40,18 +28,7 @@ public class UserController {
 	
 	@Autowired
 	UserBookService userbookservice;
-	
-	@Autowired
-	BookService bookservice;
-	
-	@Autowired
-	OrderService orderservice;
-	
-	@Autowired
-	DeliveryService deliveryservice;
-	
-
-	
+		
 	
 	@GetMapping("/users")
 	public List<Users> findAll() {
@@ -65,12 +42,15 @@ public class UserController {
 	}
 	
 	@GetMapping("/userbooks/{tableid}")
-	public UserBooks getUserBook(@PathVariable int tableid) {
-		return userbookservice.getOne(tableid);	}
+	public UserBooks getUserBook(@PathVariable int tableid) 
+	{
+		return userbookservice.getOne(tableid);	
+	}
 	
 	@DeleteMapping("/userbooks/delete/{tableid}")
 	public void deleteUserBook(@PathVariable int tableid) {
 		userbookservice.remove(tableid);
+//		return responce;
 	}
 	
 	@GetMapping("/getall-userbooks")
@@ -93,6 +73,7 @@ public class UserController {
 	@DeleteMapping("/users/{id}")
 	public void delete(@PathVariable int id) {
 		userservice.remove(id);
+//		return responce;
 	}
 	
 	@PutMapping("/users")

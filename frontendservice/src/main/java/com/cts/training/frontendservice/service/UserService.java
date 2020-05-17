@@ -11,4 +11,5 @@ public interface UserService {
 	public ResponseEntity<Users> userLogin(String username,String password);
 	public List<Users> getAllUsers();
 	public ResponseEntity<Users> registerUser(Users user);
+	public Users getOneUser(int userid);
 }

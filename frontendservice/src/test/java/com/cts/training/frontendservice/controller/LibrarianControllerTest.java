@@ -73,20 +73,6 @@ public class LibrarianControllerTest {
 		assertEquals(order1, orders);
 		verify(orderService,times(1)).getAllOrders();
 	}
-	@Test
-	public void testAcceptOrder() {
-		Orders order = new Orders(12, 17, 2, false, false);
-		when(orderService.getOrderById(12)).thenReturn(order);
-		order.setReturnstatus(true);
-		when(bookService.updateStock(17, "decr")).thenReturn(null);
-		when(orderService.updateOrder(order)).thenReturn(order);
-		Delivery delivery = new Delivery(12, order.getUserid(), 17, false, "order");
-		when(deliveryService.insertDelivery(delivery)).thenReturn(delivery);
-		Orders order1 = controller.acceptOrder(12);
-		assertEquals(order1, order);
-		verify(orderService,times(1)).updateOrder(order);
-		
-	}
 	
 	@Test
 	public void testReturnList() {
@@ -105,9 +91,28 @@ public class LibrarianControllerTest {
 		Orders order = new Orders(12, 17, 2, false, true);
 		when(orderService.getOrderById(12)).thenReturn(order);
 		when(bookService.updateStock(17, "incr")).thenReturn(null);
-		when(orderService.deleteOrder(12)).thenReturn(true);
-		String result = (String) controller.acceptReturn(12).getBody();
-		assertEquals("Successfully Returned", result);
+		Orders order1 = controller.acceptReturn(12);
+		System.out.println(order1);
+		assertEquals(order1, order);
+		verify(orderService,times(1)).getOrderById(12);
+	}
+	
+	@Test
+	public void testAcceptOrder() {
+		Orders order = new Orders(12, 17, 2, false, true);
+		when(orderService.getOrderById(12)).thenReturn(order);
+		int bookid = order.getBookid();
+		order.setRequeststatus(true);
+		Books book = new Books(12,"Lost", 10);
+		when(orderService.updateOrder(order)).thenReturn(order);
+		when(bookService.updateStock(bookid, "decr")).thenReturn(book);
+		Users user = new Users(12, "s13", "abin", "abin123", "user");
+		when(userService.getOneUser(order.getUserid())).thenReturn(user);
+		String seatno = user.getSeatno();
+		Delivery delivery = new Delivery(order.getBookid(), order.getUserid(), order.getBookid(), seatno, false, "order");
+		when(deliveryService.insertDelivery(delivery)).thenReturn(delivery);
+		Orders order1 = controller.acceptOrder(12);
+		System.out.println(order1);
 	}
 
 }

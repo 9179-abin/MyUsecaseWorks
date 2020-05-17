@@ -8,14 +8,16 @@ public class UserBooks {
 	int tableid;
 	int userid;
 	int bookid;
+	String bookname;
 	
 	public UserBooks() {}
 
-	public UserBooks(int tableid, int userid, int bookid) {
+	public UserBooks(int tableid, int userid, int bookid, String bookname) {
 		super();
 		this.tableid = tableid;
 		this.userid = userid;
 		this.bookid = bookid;
+		this.bookname = bookname;
 	}
 
 	public int getTableid() {
@@ -42,11 +44,20 @@ public class UserBooks {
 		this.bookid = bookid;
 	}
 
+	public String getBookname() {
+		return bookname;
+	}
+
+	public void setBookname(String bookname) {
+		this.bookname = bookname;
+	}
+
 	@Override
 	public String toString() {
-		return "UserBooks [tableid=" + tableid + ", userid=" + userid + ", bookid=" + bookid + "]";
+		return "UserBooks [tableid=" + tableid + ", userid=" + userid + ", bookid=" + bookid + ", bookname=" + bookname
+				+ "]";
 	}
-	
+
 	
 
 	

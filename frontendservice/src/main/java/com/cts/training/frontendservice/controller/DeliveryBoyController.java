@@ -4,8 +4,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,10 +13,11 @@ import org.springframework.web.bind.annotation.RestController;
 import com.cts.training.frontendservice.dto.Delivery;
 import com.cts.training.frontendservice.dto.Orders;
 import com.cts.training.frontendservice.dto.UserBooks;
+import com.cts.training.frontendservice.service.BookService;
 import com.cts.training.frontendservice.service.DeliveryService;
 import com.cts.training.frontendservice.service.OrderService;
 import com.cts.training.frontendservice.service.UserBookService;
-
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/deliveryboy")
 public class DeliveryBoyController {
@@ -31,6 +31,9 @@ public class DeliveryBoyController {
 	@Autowired
 	UserBookService userBookService;
 	
+	@Autowired
+	BookService bookService;
+	
 	
 	@GetMapping("/pending-tasks") //----> SHOWS ALL PENDING DELIVERIES
 	public List<Delivery> getPendingTasks(){
@@ -41,21 +44,17 @@ public class DeliveryBoyController {
 	
 	
 	@GetMapping("/deliver/{orderid}")// --------> PERFORMS DELIVERY AND RETURN
-	public ResponseEntity<?> deliverBooks(@PathVariable int orderid) 
+	public Delivery deliverBooks(@PathVariable int orderid) 
 	{
 		Delivery delivery = deliveryService.getDeliveryById(orderid);
 		delivery.setDeliverystatus(true);
-        deliveryService.updateDelivery(delivery);
+        Delivery delivery1 = deliveryService.updateDelivery(delivery);
+        String bookname = bookService.getOneBook(delivery.getBookid()).getBookname();
         if(delivery.getDeliverytype().equals("order")) 
         {
-        	UserBooks userbook = new UserBooks(1, delivery.getUserid(), delivery.getBookid());
-        	try {
-				userBookService.insertBook(userbook);
-				return new ResponseEntity<String>("Successfully Delivered",HttpStatus.OK);
-			} catch (Exception e) {
-				System.out.println(e.getStackTrace());
-				return new ResponseEntity<String>("Not Deliverd",HttpStatus.NOT_FOUND);
-			}
+        	UserBooks userbook = new UserBooks(1, delivery.getUserid(), delivery.getBookid(),bookname);
+			userBookService.insertBook(userbook);
+			return delivery1;
   		
         }
         else {
@@ -63,13 +62,9 @@ public class DeliveryBoyController {
     		order.setReturnstatus(true);
     		order.setRequeststatus(false);
     		deliveryService.deleteDelivery(orderid);
-    		try {
-				orderService.updateOrder(order);
-				return new ResponseEntity<String>("Successfully Delivered",HttpStatus.OK);
-			} catch (Exception e) {
-				System.out.println(e.getStackTrace());
-				return new ResponseEntity<String>("Not Deliverd",HttpStatus.NOT_FOUND);
-			}
+			orderService.updateOrder(order);
+			return delivery1;
+
     		
         }
 	}

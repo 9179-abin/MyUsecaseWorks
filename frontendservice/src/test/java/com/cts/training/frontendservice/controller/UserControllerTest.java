@@ -49,17 +49,6 @@ public class UserControllerTest {
 	
 	@Mock
 	UserService userService;
-	
-	
-	@Test
-	public void testPlaceOrder() {
-		Orders order =new Orders(1,12,13,false,false);
-		when(orderService.placeOrder(order)).thenReturn(order);
-		Orders order1 = (Orders) controller.placeOrders(13, 12);
-		System.out.println(order1);
-		assertEquals(order1.getBookid(),order.getBookid());
-	}
-	
 
 	@Test
 	public void testAvailableBooks() {
@@ -74,8 +63,8 @@ public class UserControllerTest {
 	@Test
 	public void testShowUserBooks() {
 		List<UserBooks> books = new ArrayList<UserBooks>();
-		books.add(new UserBooks(11,2,17));
-		books.add(new UserBooks(14,3,19));
+		books.add(new UserBooks(11,2,17,"Lost"));
+		books.add(new UserBooks(14,3,19,"Lost"));
 		
 		when(userBookService.getAllUserBooks()).thenReturn(books);
 		List<UserBooks> book = (List<UserBooks>)controller.showUserBooks(2);
@@ -86,9 +75,9 @@ public class UserControllerTest {
 	
 	@Test
 	public void testBookReturn() {
-		UserBooks book = new UserBooks(11,2,17);
+		UserBooks book = new UserBooks(11,2,17,"Lost");
 		when(userBookService.getBookById(11)).thenReturn(book);
-		Delivery delivery = new Delivery(15,2,17,true,"order");
+		Delivery delivery = new Delivery(15,2,17,"s12",true,"order");
 		when(deliveryService.getDeliveryDetails(2, 17)).thenReturn(delivery);
 		delivery.setDeliverystatus(false);
 		delivery.setDeliverytype("return");	
@@ -118,6 +107,16 @@ public class UserControllerTest {
 		assertEquals(user.getUserid(), user1.getUserid());
 		verify(userService,times(1)).registerUser(user);
 	}
+	
+	@Test
+	public void testPlaceOrder() {
+		Orders order = new Orders(1, 17, 3, false, false);
+		Orders order1 = new Orders(1, 17, 3, false, false);
+		when(orderService.placeOrder(order)).thenReturn(order1);
+		Orders order2 = controller.placeOrders(3, 17);
+		assertEquals(order2.getBookid(), order.getBookid());
+		verify(orderService,times(1)).placeOrder(order2);
+	} 
 	
 
 }

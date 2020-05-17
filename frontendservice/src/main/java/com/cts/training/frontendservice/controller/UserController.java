@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -27,7 +28,7 @@ import com.cts.training.frontendservice.service.DeliveryService;
 import com.cts.training.frontendservice.service.OrderService;
 import com.cts.training.frontendservice.service.UserBookService;
 import com.cts.training.frontendservice.service.UserService;
-
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/user")
 public class UserController {
@@ -61,6 +62,7 @@ public class UserController {
 	@GetMapping("/placeorder/{userid}/{bookid}") //------> TO PLACE BOOK ORDER
 	public Orders placeOrders(@PathVariable int userid, @PathVariable int bookid) {
 		Orders order = new Orders(1, bookid, userid, false, false);
+		orderService.placeOrder(order);
 		return order;
 	}
 	
@@ -79,7 +81,7 @@ public class UserController {
 	{
 		UserBooks book = userBookService.getBookById(tableid); 
 		int userid = book.getUserid();
-		int bookid = book.getBookid();		
+		int bookid = book.getBookid();	
 		Delivery delivery = deliveryService.getDeliveryDetails(userid, bookid);
 		delivery.setDeliverystatus(false);
 		delivery.setDeliverytype("return");

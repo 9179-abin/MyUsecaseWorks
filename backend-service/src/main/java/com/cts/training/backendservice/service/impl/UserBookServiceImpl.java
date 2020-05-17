@@ -1,9 +1,11 @@
 package com.cts.training.backendservice.service.impl;
 
 import java.util.List;
-
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.cts.training.backendservice.models.UserBooks;
@@ -26,8 +28,9 @@ public class UserBookServiceImpl implements UserBookService {
 
 	@Override
 	public UserBooks getOne(int id) {
-		UserBooks usb  = userbookrepo.findById(id).get();
-		return usb;
+		Optional<UserBooks> usb  = userbookrepo.findById(id);
+		UserBooks userBook = usb.get();
+		return userBook;
 	}
 
 	@Override
@@ -44,7 +47,8 @@ public class UserBookServiceImpl implements UserBookService {
 	@Override
 	public void remove(int id) {
 		userbookrepo.deleteById(id);
-		
+		ResponseEntity<String> response = new ResponseEntity<String>("Successfully Deleted",HttpStatus.OK);
+//		return response;
 	}
 
 }

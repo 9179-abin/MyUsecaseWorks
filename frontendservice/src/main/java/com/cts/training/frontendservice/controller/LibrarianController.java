@@ -5,9 +5,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-
-import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,7 +19,7 @@ import com.cts.training.frontendservice.service.BookService;
 import com.cts.training.frontendservice.service.DeliveryService;
 import com.cts.training.frontendservice.service.OrderService;
 import com.cts.training.frontendservice.service.UserService;
-
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/librarian")
 public class LibrarianController {
@@ -40,7 +38,9 @@ public class LibrarianController {
 	
 	@GetMapping("/getallusers")//-----> SHOWS ALL USERS
 	public List<Users> printAll(){
-		return userService.getAllUsers();
+		List<Users> user =  userService.getAllUsers();
+		List<Users> user1 = user.stream().filter(e->!e.getUsertype().equals("admin")).collect(Collectors.toList());
+		return user1;
 	}
 	
 	
@@ -60,6 +60,14 @@ public class LibrarianController {
 		return orderList;
 	}
 	
+	@GetMapping("/books-borrowed")
+	public List<Orders> showAllBorrowed(){
+		List<Orders> orderList = orderService.getAllOrders();
+		orderList=orderList.stream().filter(e->e.isRequeststatus() && !e.isReturnstatus()).collect(Collectors.toList());
+		System.out.println(orderList);
+		return orderList;
+	}
+	
 	
 	
 	@GetMapping("/accept-order/{orderid}")//-------> TO ACCEPT ORDER REQUEST
@@ -70,7 +78,8 @@ public class LibrarianController {
 		int bookid = order.getBookid();
 		bookService.updateStock(bookid, "decr");
 		Orders order1 = orderService.updateOrder(order);
-		Delivery delivery = new Delivery(orderid, order.getUserid(), bookid, false, "order");
+		String seatno = userService.getOneUser(order1.getUserid()).getSeatno();
+		Delivery delivery = new Delivery(orderid, order.getUserid(), bookid, seatno, false, "order");
         deliveryService.insertDelivery(delivery);
 		return order1;
 	}
@@ -85,17 +94,17 @@ public class LibrarianController {
 	
 	
 	@GetMapping("/accept-return/{orderid}")// ----> TO ACCEPT BOOK RETURN AND REMOVE THAT RECORD             
-	public ResponseEntity<?> acceptReturn(@PathVariable int orderid) {
+	public Orders acceptReturn(@PathVariable int orderid) {
 
 		Orders order = orderService.getOrderById(orderid);
 		int bookid = order.getBookid();
 		bookService.updateStock(bookid, "incr");
         try {
 			orderService.deleteOrder(orderid);
-			return new ResponseEntity<String>("Successfully Returned",HttpStatus.OK);
+			return order;
 		} catch (Exception e) {
 			System.out.println(e.getStackTrace());
-			return new ResponseEntity<String>("Not Deliverd",HttpStatus.CONFLICT);
+			return null;
 		}
 	}
 

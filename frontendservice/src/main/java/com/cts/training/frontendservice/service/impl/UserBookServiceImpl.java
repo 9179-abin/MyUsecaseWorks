@@ -68,9 +68,9 @@ public class UserBookServiceImpl implements UserBookService {
 	{
 		String url = basicUrl+backendServiceId+"/userbooks/"+tableid;
 		HttpHeaders header = frontEndService.getAuthHeader();
-		HttpEntity<String> requestEntity1 = new HttpEntity<String>( header);
+		HttpEntity<String> requestEntity = new HttpEntity<String>( header);
 		UserBooks book = restTemplate.exchange(url,
-				 HttpMethod.GET,  requestEntity1, new ParameterizedTypeReference<UserBooks>() { }).getBody();
+				 HttpMethod.GET,  requestEntity, new ParameterizedTypeReference<UserBooks>() { }).getBody();
 		return book;
 	}
 

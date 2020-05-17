@@ -1,9 +1,10 @@
 package com.cts.training.backendservice.controller;
 
 import java.util.List;
-import java.util.Optional;
+
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -13,40 +14,39 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.cts.training.backendservice.models.Orders;
-import com.cts.training.backendservice.repo.OrderRepo;
+import com.cts.training.backendservice.service.OrderService;
 
 @RestController
 public class OrdersController {
 	
 	@Autowired
-	OrderRepo orderrepo;
+	OrderService orderService;
 	
 	@GetMapping("/orders")
 	public List<Orders> findAll(){
-		return orderrepo.findAll();
+		return orderService.getAll();
 	}
 	
-	@GetMapping("/orders/{id}")
-	public Orders findOne(@PathVariable int id) {
-		Optional<Orders> order = orderrepo.findById(id);
-		Orders ord = order.get();
-		return ord;
+	@GetMapping("/orders/{orderid}")
+	public Orders findOne(@PathVariable int orderid) {
+		return orderService.getOne(orderid);
 	}
 	
 	@PostMapping("/orders")
 	public Orders save(@RequestBody Orders order) {
-		Orders ord = orderrepo.save(order);
+		Orders ord = orderService.insert(order);
 		return ord;
 	}
 	
-	@DeleteMapping("/orders/{id}")
-	public void delete(@PathVariable int id) {
-		orderrepo.deleteById(id);
+	@DeleteMapping("/orders/{orderid}")
+	public void delete(@PathVariable int orderid) {
+		orderService.remove(orderid);
+//		return response;
 	}
 	
 	@PutMapping("/orders")
 	public Orders update(@RequestBody Orders order) {
-		Orders ord = orderrepo.save(order);
+		Orders ord = orderService.alter(order);
 		return ord;
 	}
 

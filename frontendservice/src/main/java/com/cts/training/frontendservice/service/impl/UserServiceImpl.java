@@ -66,4 +66,14 @@ public class UserServiceImpl implements UserService {
 		return responce;
 	}
 
+	@Override
+	public Users getOneUser(int userid) {
+		String url = basicUrl+backendServiceId+"/users/"+userid;
+		HttpHeaders header = frontEndService.getAuthHeader();
+		HttpEntity<String> requestEntity = new HttpEntity<String>( header);
+		Users user = restTemplate.exchange(url,
+                HttpMethod.GET, requestEntity, new ParameterizedTypeReference<Users>() { }).getBody();
+		return user;
+	}
+
 }
